@@ -1,39 +1,55 @@
-import { searchMovieDetail } from 'fetchRequest';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { movieDetailRequest } from 'fetchRequest';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 import { LinkStyled } from 'components/styled-components';
 
 export const MovieDetails = () => {
-  const { movieId } = useParams('');
-  const [movieObj, setMovieObj] = useState({});
+  const { movieId } = useParams();
+  const [movie, setMovie] = useState(null);
+  const [error, setError] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
-    searchMovieDetail(movieId)
+    movieDetailRequest(movieId)
       .then(response => {
-        setMovieObj(response);
+        setMovie(response);
       })
-      .catch(err => alert(err));
+      .catch(err => setError(err));
   }, [movieId]);
 
-  const { poster_path, title, vote_average, overview, genres } = movieObj;
-
-  console.log(movieObj);
   return (
     <>
-      <LinkStyled>Go Back</LinkStyled>
-      <div>
-        <img
-          src={`https://image.tmdb.org/t/p/w500/${poster_path}`}
-          alt={title}
-          width={300}
-        />
-        <h2>{title}</h2>
-        <p>User score: {Math.round(vote_average * 10)}%</p>
-        <h3>Overview</h3>
-        <p>{overview}</p>
-        <h4>Genres</h4>
-        <p>{genres && genres.map(el => el.name).join(', ')}</p>
-      </div>
+      {movie && (
+        <div>
+          <LinkStyled to={location.state ?? '/'}>Go back</LinkStyled>
+          <div>
+            <img
+              src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+              alt={movie.title}
+              width={300}
+            />
+            <h2>{movie.title}</h2>
+            <p>User score: {Math.round(movie.vote_average * 10)}%</p>
+            <h3>Overview</h3>
+            <p>{movie.overview}</p>
+            <h4>Genres</h4>
+            <p>{movie.genres.map(el => el.name).join(', ')}</p>
+          </div>
+          <div>
+            <h4>Additional information</h4>
+            <ul>
+              <li>
+                <LinkStyled to={'cast'}>Cast</LinkStyled>
+              </li>
+              <li>
+                <LinkStyled to={'reviews'}>Reviews</LinkStyled>
+              </li>
+            </ul>
+          </div>
+          <Outlet />
+        </div>
+      )}
+      {error && <h1>Movie doesn't exist</h1>}
     </>
   );
 };
