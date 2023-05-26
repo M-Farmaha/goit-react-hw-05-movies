@@ -1,29 +1,38 @@
 import { castRequest } from 'fetchRequest';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import NoCastFaceImageW92 from '../images/no-cast-face-w92.jpg';
 
 export const Cast = () => {
-  const [cast, setCast] = useState(null);
+  const [cast, setCast] = useState([]);
   const { movieId } = useParams();
-  console.log(cast);
 
   useEffect(() => {
     castRequest(movieId)
       .then(response => {
-        setCast(response);
+        setCast(response.cast);
       })
       .catch(err => console.log(err));
   }, [movieId]);
-  return (
-    cast && (
-      <div>
-        <img
-          src={`https://image.tmdb.org/t/p/w92/${cast.cast[0].profile_path}`}
-          alt={cast.cast.name}
-        />
-        <p>{cast.cast[0].name}</p>
-        <p>{cast.cast[0].character}</p>
-      </div>
-    )
+
+  return cast.length !== 0 ? (
+    <ul>
+      {cast.map(el => (
+        <li key={el.id}>
+          <img
+            src={
+              el.profile_path
+                ? `https://image.tmdb.org/t/p/w92/${el.profile_path}`
+                : NoCastFaceImageW92
+            }
+            alt={el.name}
+          />
+          <p>{el.name}</p>
+          <p>{el.character}</p>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>Sorry! We don't have cast info about this movie :(</p>
   );
 };

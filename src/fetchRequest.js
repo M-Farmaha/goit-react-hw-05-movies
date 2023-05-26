@@ -52,3 +52,16 @@ export const castRequest = async movieId => {
     throw new Error(errorData);
   }
 };
+
+export const reviewsRequest = async movieId => {
+  const url = `${BASE_URL}/movie/${movieId}/reviews?api_key=${KEY}&language=en-US`;
+  const response = await fetch(url);
+
+  if (response.ok) {
+    const data = await response.json();
+    return data;
+  } else {
+    const errorData = await response.json();
+    throw new Error(errorData);
+  }
+};
