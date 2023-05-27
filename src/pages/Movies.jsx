@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
 import { searchMoviesRequest } from 'fetchRequest';
-import { LinkStyled } from 'components/styled-components';
+import {
+  Form,
+  FormWrap,
+  LinkStyled,
+  SearchFormInput,
+  SearchFormButton,
+  SearchFormIcon,
+  HomeList,
+} from 'components/styled-components';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
-export const Movies = () => {
+const Movies = () => {
   const [searchMovies, setSearchMovies] = useState(
     JSON.parse(window.localStorage.getItem('searchMovies')) ?? []
   );
@@ -46,32 +54,36 @@ export const Movies = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="search"
-          value={inputValue}
-          onChange={e => {
-            setInputValue(e.target.value);
-          }}
-        />
-        <button type="submit">Search</button>
-      </form>
-
+      <FormWrap>
+        <Form onSubmit={handleSubmit}>
+          <SearchFormInput
+            autoComplete="off"
+            type="text"
+            name="search"
+            value={inputValue}
+            onChange={e => {
+              setInputValue(e.target.value);
+            }}
+          />
+          <SearchFormButton type="submit">
+            <SearchFormIcon />
+          </SearchFormButton>
+        </Form>
+      </FormWrap>
       {isShownError && <h2>There are no movies for your request :(</h2>}
-
-      <ul>
-        {searchMovies.length !== 0 &&
-          searchMovies.map(movie => {
-            return (
-              <li key={movie.id}>
-                <LinkStyled to={`${movie.id}`} state={location}>
-                  {movie.title}
-                </LinkStyled>
-              </li>
-            );
-          })}
-      </ul>
+      {searchMovies.length !== 0 && (
+        <HomeList>
+          {searchMovies.map(movie => (
+            <li key={movie.id}>
+              <LinkStyled to={`${movie.id}`} state={location}>
+                {movie.title}
+              </LinkStyled>
+            </li>
+          ))}
+        </HomeList>
+      )}
     </>
   );
 };
+
+export default Movies;

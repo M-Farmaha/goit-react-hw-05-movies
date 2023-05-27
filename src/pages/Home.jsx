@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { trendingMoviesRequest } from 'fetchRequest';
-import { LinkStyled } from 'components/styled-components';
+import { LinkStyled, HomeList, HomeTitle } from 'components/styled-components';
 import { useLocation } from 'react-router-dom';
 
-export const Home = () => {
+const Home = () => {
   const [trendingMovies, setTrendingMovies] = useState([]);
   const location = useLocation();
 
@@ -16,11 +16,11 @@ export const Home = () => {
   }, []);
 
   return (
-    <>
-      <h2>Trending today</h2>
-      <ul>
-        {trendingMovies.length !== 0 &&
-          trendingMovies.map(movie => {
+    trendingMovies.length !== 0 && (
+      <>
+        <HomeTitle>Trending today</HomeTitle>
+        <HomeList>
+          {trendingMovies.map(movie => {
             return (
               <li key={movie.id}>
                 <LinkStyled to={`movies/${movie.id}`} state={location}>
@@ -29,7 +29,10 @@ export const Home = () => {
               </li>
             );
           })}
-      </ul>
-    </>
+        </HomeList>
+      </>
+    )
   );
 };
+
+export default Home;

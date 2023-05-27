@@ -1,8 +1,9 @@
 import { reviewsRequest } from 'fetchRequest';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { AddSection, Review } from './styled-components';
 
-export const Reviews = () => {
+const Reviews = () => {
   const [reviews, setReviews] = useState([]);
   const { movieId } = useParams();
 
@@ -15,15 +16,19 @@ export const Reviews = () => {
   }, [movieId]);
 
   return reviews.length !== 0 ? (
-    <ul>
-      {reviews.map(el => (
-        <li key={el.id}>
-          <h4>Author: {el.author}</h4>
-          <p>{el.content}</p>
-        </li>
-      ))}
-    </ul>
+    <AddSection>
+      <ul>
+        {reviews.map(el => (
+          <Review key={el.id}>
+            <h4>Author: {el.author}</h4>
+            <p>{el.content}</p>
+          </Review>
+        ))}
+      </ul>
+    </AddSection>
   ) : (
-    <p>Sorry! We don't have any reviews for this movie :(</p>
+    <h3>Sorry! We don't have any reviews for this movie :(</h3>
   );
 };
+
+export default Reviews;

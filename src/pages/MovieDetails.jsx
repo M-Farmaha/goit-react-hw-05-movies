@@ -1,10 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { movieDetailRequest } from 'fetchRequest';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { LinkStyled } from 'components/styled-components';
+import {
+  ImageWrap,
+  ImagePoster,
+  Button,
+  MovieWrap,
+  AddWrap,
+  AddSection,
+} from 'components/styled-components';
 import NoPoSterW500 from '../images/no-poster-w500.jpg';
 
-export const MovieDetails = () => {
+const MovieDetails = () => {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
   const [error, setError] = useState(null);
@@ -28,41 +35,50 @@ export const MovieDetails = () => {
     <>
       {movie && (
         <div>
-          <button type="button" onClick={handleClick}>
-            Go back
-          </button>
-          <div>
-            <img
-              src={
-                movie.poster_path
-                  ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
-                  : NoPoSterW500
-              }
-              alt={movie.title}
-              width={300}
-            />
+          <MovieWrap>
+            <Button type="button" onClick={handleClick}>
+              Go back
+            </Button>
+            <ImageWrap>
+              <ImagePoster
+                src={
+                  movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
+                    : NoPoSterW500
+                }
+                alt={movie.title}
+              />
+            </ImageWrap>
             <h2>{movie.title}</h2>
             <p>User score: {Math.round(movie.vote_average * 10)}%</p>
             <h3>Overview</h3>
             <p>{movie.overview}</p>
             <h3>Genres</h3>
             <p>{movie.genres.map(el => el.name).join(', ')}</p>
-          </div>
-          <div>
+          </MovieWrap>
+          <AddSection>
             <h3>Additional information</h3>
-            <ul>
+            <AddWrap>
               <li>
-                <LinkStyled to={'cast'}>Cast</LinkStyled>
+                <Button type="button" onClick={() => navigate('cast')}>
+                  Cast
+                </Button>
               </li>
               <li>
-                <LinkStyled to={'reviews'}>Reviews</LinkStyled>
+                <Button type="button" onClick={() => navigate('reviews')}>
+                  Reviews
+                </Button>
               </li>
-            </ul>
-          </div>
-          <Outlet />
+            </AddWrap>
+          </AddSection>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Outlet />
+          </Suspense>
         </div>
       )}
       {error && <h2>Movie doesn't exist</h2>}
     </>
   );
 };
+
+export default MovieDetails;
